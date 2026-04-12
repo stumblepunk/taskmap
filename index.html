@@ -1,0 +1,866 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Task Map</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700&family=Inconsolata:wght@400;500&display=swap');
+
+  :root {
+    --bg: #12110f;
+    --surface: #1c1b18;
+    --surface2: #252420;
+    --border: #302e28;
+    --accent: #d4a847;
+    --accent2: #7eb8a4;
+    --text: #ede8df;
+    --muted: #7a7568;
+    --danger: #c96a4a;
+
+    --imp5: #e05a3a;
+    --imp4: #d4902a;
+    --imp3: #c8c040;
+    --imp2: #7ab870;
+    --imp1: #6090b0;
+
+    --physical: #b07ab8;
+    --computer: #7ab8c8;
+
+    --cat-home: #e07850;
+    --cat-yard: #78b858;
+    --cat-vehicles: #5890d8;
+    --cat-tech: #9878d8;
+    --cat-family: #d87898;
+    --cat-admin: #d8b858;
+    --cat-hobby: #78c8b8;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Syne', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 20px 14px 60px;
+  }
+
+  /* HEADER */
+  header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    gap: 10px;
+  }
+
+  header h1 {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--accent);
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+  }
+
+  header p {
+    font-family: 'Inconsolata', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-top: 3px;
+  }
+
+  .header-actions {
+    display: flex;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+
+  .icon-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 16px;
+    transition: all 0.15s;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .icon-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* STATUS BAR */
+  .status-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 16px;
+    padding: 8px 12px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+  }
+
+  .status-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--muted);
+    flex-shrink: 0;
+  }
+
+  .status-dot.live { background: var(--accent2); }
+  .status-dot.error { background: var(--danger); }
+
+  .status-text {
+    font-family: 'Inconsolata', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    flex: 1;
+  }
+
+  .sync-btn {
+    font-family: 'Inconsolata', monospace;
+    font-size: 10px;
+    padding: 3px 8px;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--muted);
+    cursor: pointer;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    transition: all 0.15s;
+  }
+
+  .sync-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* VIEW TOGGLE */
+  .view-toggle {
+    display: flex;
+    gap: 0;
+    margin-bottom: 14px;
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    overflow: hidden;
+    width: fit-content;
+  }
+
+  .view-btn {
+    font-family: 'Inconsolata', monospace;
+    font-size: 11px;
+    padding: 7px 14px;
+    background: var(--surface2);
+    color: var(--muted);
+    cursor: pointer;
+    border: none;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    transition: all 0.15s;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .view-btn.active { background: var(--accent); color: var(--bg); font-weight: 600; }
+
+  /* FILTERS */
+  .filter-label {
+    font-family: 'Inconsolata', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 5px;
+    margin-top: 10px;
+  }
+
+  .filter-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-bottom: 4px;
+  }
+
+  .filter-btn {
+    font-family: 'Inconsolata', monospace;
+    font-size: 11px;
+    padding: 4px 9px;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+    background: var(--surface2);
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.15s;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .filter-btn.active { border-color: var(--accent); color: var(--accent); background: #2a2518; }
+
+  /* GRID VIEW */
+  .grid-view {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 14px;
+  }
+
+  .quadrant {
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    overflow: hidden;
+  }
+
+  .q-head {
+    padding: 10px 12px 8px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .q-title {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .q-hint { font-family: 'Inconsolata', monospace; font-size: 10px; color: var(--muted); margin-top: 1px; }
+
+  .q-do .q-title { color: #7ec87e; }
+  .q-plan .q-title { color: var(--accent); }
+  .q-fill .q-title { color: #7ab8c8; }
+  .q-defer .q-title { color: #c06060; }
+
+  .q-tasks { padding: 8px; display: flex; flex-direction: column; gap: 5px; min-height: 60px; }
+
+  /* LIST VIEW */
+  .list-view { display: flex; flex-direction: column; gap: 7px; margin-top: 14px; }
+
+  /* TASK CHIP */
+  .task-chip {
+    border-radius: 6px;
+    padding: 7px 9px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .task-chip:hover { border-color: var(--muted); }
+  .task-chip.done { opacity: 0.28; }
+  .task-chip.hidden { display: none; }
+
+  .chip-name { font-size: 11px; font-weight: 600; line-height: 1.3; margin-bottom: 4px; }
+  .chip-name.done-text { text-decoration: line-through; }
+  .chip-meta { display: flex; flex-wrap: wrap; gap: 3px; align-items: center; }
+
+  /* TASK ROW */
+  .task-row {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 9px;
+    padding: 11px 13px;
+    cursor: pointer;
+    transition: all 0.15s;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .task-row:hover { border-color: var(--muted); }
+  .task-row.done { opacity: 0.28; }
+  .task-row.hidden { display: none; }
+
+  .row-check {
+    width: 16px; height: 16px; border-radius: 4px;
+    border: 1.5px solid var(--border); flex-shrink: 0; margin-top: 1px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 9px; transition: all 0.15s;
+  }
+
+  .task-row.done .row-check { background: var(--muted); border-color: var(--muted); color: var(--bg); }
+
+  .row-body { flex: 1; }
+  .row-name { font-size: 14px; font-weight: 600; margin-bottom: 5px; line-height: 1.25; }
+  .row-name.done-text { text-decoration: line-through; }
+  .row-meta { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; }
+
+  .tag {
+    font-family: 'Inconsolata', monospace;
+    font-size: 9px;
+    padding: 1px 5px;
+    border-radius: 3px;
+    letter-spacing: 0.04em;
+  }
+
+  .imp-bar { display: flex; gap: 2px; align-items: center; margin-left: auto; }
+  .imp-pip { width: 5px; height: 14px; border-radius: 2px; }
+
+  /* ADD TASK MODAL */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.75);
+    z-index: 100;
+    align-items: flex-end;
+    justify-content: center;
+  }
+
+  .modal-overlay.open { display: flex; }
+
+  .modal {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px 16px 0 0;
+    padding: 20px 16px 36px;
+    width: 100%;
+    max-width: 480px;
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+
+  .modal h2 {
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--accent);
+    margin-bottom: 18px;
+  }
+
+  .form-field { margin-bottom: 14px; }
+
+  .form-label {
+    font-family: 'Inconsolata', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    display: block;
+    margin-bottom: 6px;
+  }
+
+  .form-input {
+    width: 100%;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    padding: 10px 12px;
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+
+  .form-input:focus { border-color: var(--accent); }
+
+  .btn-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .opt-btn {
+    font-family: 'Inconsolata', monospace;
+    font-size: 11px;
+    padding: 5px 10px;
+    border-radius: 5px;
+    border: 1px solid var(--border);
+    background: var(--surface2);
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.15s;
+    user-select: none;
+  }
+
+  .opt-btn.sel { background: var(--accent); border-color: var(--accent); color: var(--bg); font-weight: 600; }
+
+  .imp-opts { display: flex; gap: 6px; }
+  .imp-opt {
+    flex: 1; text-align: center;
+    font-family: 'Inconsolata', monospace; font-size: 14px; font-weight: 600;
+    padding: 8px 4px;
+    border-radius: 5px; border: 1px solid var(--border);
+    background: var(--surface2); color: var(--muted);
+    cursor: pointer; transition: all 0.15s; user-select: none;
+  }
+
+  .imp-opt.sel-1 { background:#2a3a2a;border-color:#4a6a4a;color:#8aba8a; }
+  .imp-opt.sel-2 { background:#2e3a22;border-color:#5a6a32;color:#a0ba60; }
+  .imp-opt.sel-3 { background:#3a3420;border-color:#7a6a30;color:#c8a840; }
+  .imp-opt.sel-4 { background:#3a2e1a;border-color:#8a5a28;color:#d08040; }
+  .imp-opt.sel-5 { background:#3a1e1a;border-color:#9a3a28;color:#d06040; }
+
+  .modal-actions { display: flex; gap: 8px; margin-top: 20px; }
+
+  .btn-primary {
+    flex: 1; padding: 12px;
+    background: var(--accent); color: var(--bg);
+    border: none; border-radius: 8px;
+    font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 700;
+    cursor: pointer; transition: opacity 0.15s;
+  }
+
+  .btn-primary:hover { opacity: 0.9; }
+  .btn-primary:disabled { opacity: 0.3; cursor: not-allowed; }
+
+  .btn-cancel {
+    padding: 12px 18px;
+    background: transparent; color: var(--muted);
+    border: 1px solid var(--border); border-radius: 8px;
+    font-family: 'Syne', sans-serif; font-size: 14px;
+    cursor: pointer; transition: all 0.15s;
+  }
+
+  .btn-cancel:hover { border-color: var(--muted); color: var(--text); }
+
+  /* LEGEND */
+  .legend {
+    margin-top: 20px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 14px;
+  }
+
+  .legend-section { margin-bottom: 10px; }
+  .legend-title {
+    font-family: 'Inconsolata', monospace;
+    font-size: 10px; color: var(--muted);
+    text-transform: uppercase; letter-spacing: 0.08em;
+    margin-bottom: 6px;
+  }
+
+  .legend-row { display: flex; flex-wrap: wrap; gap: 8px; }
+
+  .legend-item {
+    display: flex; align-items: center; gap: 5px;
+    font-family: 'Inconsolata', monospace; font-size: 11px; color: var(--muted);
+  }
+
+  .legend-swatch { width: 10px; height: 10px; border-radius: 2px; }
+
+  .done-count {
+    font-family: 'Inconsolata', monospace;
+    font-size: 11px; color: var(--muted);
+    text-align: right; margin-top: 14px;
+  }
+
+  .done-count span { color: var(--accent); }
+
+  /* CONFIG NOTICE */
+  .config-notice {
+    background: #2a2010;
+    border: 1px solid #5a4a20;
+    border-radius: 10px;
+    padding: 14px 16px;
+    margin-bottom: 16px;
+    font-family: 'Inconsolata', monospace;
+    font-size: 12px;
+    color: #c8a840;
+    line-height: 1.6;
+  }
+
+  .config-notice strong { color: var(--accent); }
+  .config-notice code {
+    background: #1a1408;
+    padding: 1px 5px;
+    border-radius: 3px;
+    font-size: 11px;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <h1>Task Map</h1>
+    <p>Dave's command center</p>
+  </div>
+  <div class="header-actions">
+    <div class="icon-btn" onclick="openModal()" title="Add task">＋</div>
+    <div class="icon-btn" onclick="loadTasks()" title="Sync">↻</div>
+  </div>
+</header>
+
+<!-- Config notice — shown until SCRIPT_URL is set -->
+<div class="config-notice" id="configNotice" style="display:none">
+  <strong>Setup needed:</strong> Open <code>config.js</code> and paste your Apps Script URL as <code>SCRIPT_URL</code>. Then reload this page.
+</div>
+
+<div class="status-bar">
+  <div class="status-dot" id="statusDot"></div>
+  <div class="status-text" id="statusText">Connecting...</div>
+  <button class="sync-btn" onclick="loadTasks()">Sync</button>
+</div>
+
+<div class="view-toggle">
+  <div class="view-btn active" onclick="setView('grid')">Grid</div>
+  <div class="view-btn" onclick="setView('list')">List</div>
+</div>
+
+<div class="filter-label">Type</div>
+<div class="filter-group" id="typeFilters">
+  <div class="filter-btn active" onclick="toggleFilter('type','All',this)">All</div>
+  <div class="filter-btn" onclick="toggleFilter('type','Physical',this)">Physical</div>
+  <div class="filter-btn" onclick="toggleFilter('type','Computer',this)">Computer</div>
+</div>
+
+<div class="filter-label">Category</div>
+<div class="filter-group" id="catFilters">
+  <div class="filter-btn active" onclick="toggleFilter('cat','All',this)">All</div>
+  <div class="filter-btn" onclick="toggleFilter('cat','Home',this)">Home</div>
+  <div class="filter-btn" onclick="toggleFilter('cat','Yard',this)">Yard</div>
+  <div class="filter-btn" onclick="toggleFilter('cat','Vehicles',this)">Vehicles</div>
+  <div class="filter-btn" onclick="toggleFilter('cat','Tech',this)">Tech</div>
+  <div class="filter-btn" onclick="toggleFilter('cat','Family',this)">Family</div>
+  <div class="filter-btn" onclick="toggleFilter('cat','Hobby',this)">Hobby</div>
+</div>
+
+<div id="gridView" class="grid-view">
+  <div class="quadrant q-do">
+    <div class="q-head"><div class="q-title">Do First</div><div class="q-hint">high importance · quick</div></div>
+    <div class="q-tasks" id="q-do"></div>
+  </div>
+  <div class="quadrant q-plan">
+    <div class="q-head"><div class="q-title">Schedule</div><div class="q-hint">high importance · big effort</div></div>
+    <div class="q-tasks" id="q-plan"></div>
+  </div>
+  <div class="quadrant q-fill">
+    <div class="q-head"><div class="q-title">Fill-in</div><div class="q-hint">lower importance · quick</div></div>
+    <div class="q-tasks" id="q-fill"></div>
+  </div>
+  <div class="quadrant q-defer">
+    <div class="q-head"><div class="q-title">Defer</div><div class="q-hint">lower importance · big effort</div></div>
+    <div class="q-tasks" id="q-defer"></div>
+  </div>
+</div>
+
+<div id="listView" class="list-view" style="display:none"></div>
+
+<div class="legend">
+  <div class="legend-section">
+    <div class="legend-title">Category</div>
+    <div class="legend-row">
+      <div class="legend-item"><div class="legend-swatch" style="background:var(--cat-home)"></div>Home</div>
+      <div class="legend-item"><div class="legend-swatch" style="background:var(--cat-yard)"></div>Yard</div>
+      <div class="legend-item"><div class="legend-swatch" style="background:var(--cat-vehicles)"></div>Vehicles</div>
+      <div class="legend-item"><div class="legend-swatch" style="background:var(--cat-tech)"></div>Tech</div>
+      <div class="legend-item"><div class="legend-swatch" style="background:var(--cat-family)"></div>Family</div>
+      <div class="legend-item"><div class="legend-swatch" style="background:var(--cat-hobby)"></div>Hobby</div>
+    </div>
+  </div>
+  <div class="legend-section">
+    <div class="legend-title">Importance</div>
+    <div class="legend-row">
+      <div class="legend-item"><div class="legend-swatch" style="background:var(--imp1)"></div>1 — low</div>
+      <div class="legend-item"><div class="legend-swatch" style="background:var(--imp3)"></div>3 — mid</div>
+      <div class="legend-item"><div class="legend-swatch" style="background:var(--imp5)"></div>5 — critical</div>
+    </div>
+  </div>
+</div>
+
+<div class="done-count" id="doneCount">— / — complete</div>
+
+<!-- ADD TASK MODAL -->
+<div class="modal-overlay" id="modalOverlay" onclick="closeModalIfBg(event)">
+  <div class="modal">
+    <h2>Add Task</h2>
+
+    <div class="form-field">
+      <label class="form-label">Task name</label>
+      <input class="form-input" id="newName" type="text" placeholder="What needs done?">
+    </div>
+
+    <div class="form-field">
+      <label class="form-label">Time to complete</label>
+      <div class="btn-group" id="timeOpts">
+        <div class="opt-btn" onclick="selectOpt('time','30 min',this)">30 min</div>
+        <div class="opt-btn" onclick="selectOpt('time','2 hours',this)">2 hours</div>
+        <div class="opt-btn" onclick="selectOpt('time','Full day',this)">Full day</div>
+        <div class="opt-btn" onclick="selectOpt('time','Open ended',this)">Open ended</div>
+      </div>
+    </div>
+
+    <div class="form-field">
+      <label class="form-label">Type of work</label>
+      <div class="btn-group" id="typeOpts">
+        <div class="opt-btn" onclick="selectOpt('type','Physical',this)">Physical</div>
+        <div class="opt-btn" onclick="selectOpt('type','Computer',this)">Computer</div>
+      </div>
+    </div>
+
+    <div class="form-field">
+      <label class="form-label">Category</label>
+      <div class="btn-group" id="catOpts">
+        <div class="opt-btn" onclick="selectOpt('cat','Home',this)">Home</div>
+        <div class="opt-btn" onclick="selectOpt('cat','Yard',this)">Yard</div>
+        <div class="opt-btn" onclick="selectOpt('cat','Vehicles',this)">Vehicles</div>
+        <div class="opt-btn" onclick="selectOpt('cat','Tech',this)">Tech</div>
+        <div class="opt-btn" onclick="selectOpt('cat','Family',this)">Family</div>
+        <div class="opt-btn" onclick="selectOpt('cat','Hobby',this)">Hobby</div>
+      </div>
+    </div>
+
+    <div class="form-field">
+      <label class="form-label">Importance (1 = low, 5 = critical)</label>
+      <div class="imp-opts" id="impOpts">
+        <div class="imp-opt" onclick="selectImp(1,this)">1</div>
+        <div class="imp-opt" onclick="selectImp(2,this)">2</div>
+        <div class="imp-opt" onclick="selectImp(3,this)">3</div>
+        <div class="imp-opt" onclick="selectImp(4,this)">4</div>
+        <div class="imp-opt" onclick="selectImp(5,this)">5</div>
+      </div>
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+      <button class="btn-primary" onclick="submitTask()">Add Task</button>
+    </div>
+  </div>
+</div>
+
+<script src="config.js"></script>
+<script>
+// ---- CONFIG CHECK ----
+if (typeof SCRIPT_URL === 'undefined' || SCRIPT_URL === 'YOUR_APPS_SCRIPT_URL_HERE') {
+  document.getElementById('configNotice').style.display = 'block';
+  setStatus('error', 'Not configured — see setup guide');
+}
+
+// ---- STATE ----
+let tasks = [];
+let doneSet = new Set();
+let currentView = 'grid';
+let activeType = 'All';
+let activeCat = 'All';
+
+const newTask = { time: null, type: null, cat: null, imp: null };
+
+// ---- COLORS ----
+const catColors = {
+  Home:'var(--cat-home)', Yard:'var(--cat-yard)', Vehicles:'var(--cat-vehicles)',
+  Tech:'var(--cat-tech)', Family:'var(--cat-family)', Admin:'var(--cat-admin)', Hobby:'var(--cat-hobby)'
+};
+const impColors = {1:'var(--imp1)',2:'var(--imp2)',3:'var(--imp3)',4:'var(--imp4)',5:'var(--imp5)'};
+const typeColors = {Physical:'var(--physical)',Computer:'var(--computer)'};
+const timeWeight = {"30 min":1,"2 hours":2,"Full day":3,"Open ended":4};
+
+// ---- STATUS ----
+function setStatus(state, msg) {
+  const dot = document.getElementById('statusDot');
+  const text = document.getElementById('statusText');
+  dot.className = 'status-dot' + (state === 'live' ? ' live' : state === 'error' ? ' error' : '');
+  text.textContent = msg;
+}
+
+// ---- LOAD TASKS ----
+async function loadTasks() {
+  if (typeof SCRIPT_URL === 'undefined' || SCRIPT_URL === 'YOUR_APPS_SCRIPT_URL_HERE') return;
+  setStatus('', 'Syncing...');
+  try {
+    const res = await fetch(`${SCRIPT_URL}?action=getTasks`, {redirect: "follow", mode: "cors"});
+    const data = await res.json();
+    tasks = data.tasks || [];
+    doneSet = new Set(tasks.filter(t => t.Done === true || t.Done === 'TRUE').map(t => t.ID));
+    setStatus('live', `Synced · ${tasks.length} tasks`);
+    render();
+  } catch (err) {
+    setStatus('error', 'Sync failed — check your connection');
+  }
+}
+
+// ---- QUADRANT LOGIC ----
+function quadrant(task) {
+  const quick = timeWeight[task.Time] <= 2;
+  const important = parseInt(task.Importance) >= 4;
+  if (important && quick) return 'do';
+  if (important && !quick) return 'plan';
+  if (!important && quick) return 'fill';
+  return 'defer';
+}
+
+// ---- RENDER HELPERS ----
+function impPips(imp) {
+  imp = parseInt(imp);
+  let html = '<div class="imp-bar">';
+  for (let i = 1; i <= 5; i++) {
+    const col = i <= imp ? impColors[imp] : 'var(--border)';
+    html += `<div class="imp-pip" style="background:${col}"></div>`;
+  }
+  return html + '</div>';
+}
+
+function tagHTML(task) {
+  const cc = catColors[task.Category] || 'var(--muted)';
+  const tc = typeColors[task.Type] || 'var(--muted)';
+  return `
+    <span class="tag" style="background:${cc}22;color:${cc};border:1px solid ${cc}44">${task.Category}</span>
+    <span class="tag" style="background:${tc}22;color:${tc};border:1px solid ${tc}44">${task.Type}</span>
+    <span class="tag" style="background:var(--surface2);color:var(--muted);border:1px solid var(--border)">${task.Time}</span>
+  `;
+}
+
+function isHidden(task) {
+  if (activeType !== 'All' && task.Type !== activeType) return true;
+  if (activeCat !== 'All' && task.Category !== activeCat) return true;
+  return false;
+}
+
+// ---- RENDER ----
+function render() {
+  const sorted = [...tasks].sort((a,b) => parseInt(b.Importance) - parseInt(a.Importance));
+
+  // Grid
+  ['do','plan','fill','defer'].forEach(q => document.getElementById(`q-${q}`).innerHTML = '');
+
+  sorted.forEach(task => {
+    const q = quadrant(task);
+    const isDone = doneSet.has(task.ID) || doneSet.has(String(task.ID));
+    const hidden = isHidden(task);
+
+    const chip = document.createElement('div');
+    chip.className = `task-chip${isDone?' done':''}${hidden?' hidden':''}`;
+    chip.innerHTML = `
+      <div class="chip-name${isDone?' done-text':''}">${task.Task}</div>
+      <div class="chip-meta">${tagHTML(task)}${impPips(task.Importance)}</div>
+    `;
+    chip.onclick = () => toggleDone(task);
+    document.getElementById(`q-${q}`).appendChild(chip);
+  });
+
+  // List
+  const listEl = document.getElementById('listView');
+  listEl.innerHTML = '';
+
+  sorted.forEach(task => {
+    const isDone = doneSet.has(task.ID) || doneSet.has(String(task.ID));
+    const hidden = isHidden(task);
+
+    const row = document.createElement('div');
+    row.className = `task-row${isDone?' done':''}${hidden?' hidden':''}`;
+    row.innerHTML = `
+      <div class="row-check">${isDone?'✓':''}</div>
+      <div class="row-body">
+        <div class="row-name${isDone?' done-text':''}">${task.Task}</div>
+        <div class="row-meta">${tagHTML(task)}${impPips(task.Importance)}</div>
+      </div>
+    `;
+    row.onclick = () => toggleDone(task);
+    listEl.appendChild(row);
+  });
+
+  updateDoneCount();
+}
+
+async function toggleDone(task) {
+  const id = String(task.ID);
+  const nowDone = !(doneSet.has(task.ID) || doneSet.has(id));
+  if (nowDone) doneSet.add(id); else doneSet.delete(id);
+  render();
+
+  // Persist to sheet
+  try {
+    await fetch(SCRIPT_URL, {
+      redirect: "follow",
+      method: 'POST',
+      body: JSON.stringify({
+        action: 'updateTask',
+        task: { ...task, done: nowDone }
+      })
+    });
+  } catch(e) { /* silent fail — will sync on next load */ }
+}
+
+function updateDoneCount() {
+  document.getElementById('doneCount').innerHTML = `<span>${doneSet.size}</span> / ${tasks.length} complete`;
+}
+
+// ---- VIEW / FILTER ----
+function setView(v) {
+  currentView = v;
+  document.getElementById('gridView').style.display = v==='grid'?'grid':'none';
+  document.getElementById('listView').style.display = v==='list'?'flex':'none';
+  document.querySelectorAll('.view-btn').forEach((b,i) => {
+    b.classList.toggle('active', (i===0&&v==='grid')||(i===1&&v==='list'));
+  });
+}
+
+function toggleFilter(filterType, value, el) {
+  if (filterType==='type') {
+    activeType = value;
+    document.querySelectorAll('#typeFilters .filter-btn').forEach(b => b.classList.remove('active'));
+  } else {
+    activeCat = value;
+    document.querySelectorAll('#catFilters .filter-btn').forEach(b => b.classList.remove('active'));
+  }
+  el.classList.add('active');
+  render();
+}
+
+// ---- MODAL ----
+function openModal() { document.getElementById('modalOverlay').classList.add('open'); }
+function closeModal() { document.getElementById('modalOverlay').classList.remove('open'); resetForm(); }
+function closeModalIfBg(e) { if (e.target === document.getElementById('modalOverlay')) closeModal(); }
+
+function selectOpt(field, value, el) {
+  newTask[field] = value;
+  const groupId = { time:'timeOpts', type:'typeOpts', cat:'catOpts' }[field];
+  document.getElementById(groupId).querySelectorAll('.opt-btn').forEach(b => b.classList.remove('sel'));
+  el.classList.add('sel');
+}
+
+function selectImp(val, el) {
+  newTask.imp = val;
+  document.getElementById('impOpts').querySelectorAll('.imp-opt').forEach(b => {
+    b.className = 'imp-opt';
+  });
+  el.classList.add(`sel-${val}`);
+}
+
+function resetForm() {
+  document.getElementById('newName').value = '';
+  ['timeOpts','typeOpts','catOpts'].forEach(id => {
+    document.getElementById(id).querySelectorAll('.opt-btn').forEach(b => b.classList.remove('sel'));
+  });
+  document.getElementById('impOpts').querySelectorAll('.imp-opt').forEach(b => b.className='imp-opt');
+  newTask.time = newTask.type = newTask.cat = newTask.imp = null;
+}
+
+async function submitTask() {
+  const name = document.getElementById('newName').value.trim();
+  if (!name) { alert('Please enter a task name.'); return; }
+
+  const task = {
+    name,
+    time: newTask.time || 'Open ended',
+    type: newTask.type || 'Physical',
+    category: newTask.cat || 'Home',
+    importance: newTask.imp || 3
+  };
+
+  try {
+    await fetch(SCRIPT_URL, {
+      redirect: "follow",
+      method: 'POST',
+      body: JSON.stringify({ action: 'addTask', task })
+    });
+    closeModal();
+    await loadTasks();
+  } catch(e) {
+    alert('Could not save task. Check your connection.');
+  }
+}
+
+// ---- INIT ----
+loadTasks();
+</script>
+</body>
+</html>
