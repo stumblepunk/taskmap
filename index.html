@@ -13,10 +13,8 @@
     --surface2: #1e1e1e;
     --border: #2a2a2a;
     --accent: #d0d0d0;
-    --accent2: #888888;
     --text: #e8e8e8;
     --muted: #606060;
-    --danger: #888888;
 
     --imp5: #e05a3a;
     --imp4: #d4902a;
@@ -44,13 +42,14 @@
     color: var(--text);
     min-height: 100vh;
     padding: 20px 14px 60px;
+    max-width: 680px;
+    margin: 0 auto;
   }
 
   header {
     display: flex; align-items: flex-start;
     justify-content: space-between; margin-bottom: 20px; gap: 10px;
   }
-
   header h1 { font-size: 22px; font-weight: 700; color: var(--accent); letter-spacing: -0.02em; line-height: 1.1; }
   header p { font-family: 'Inconsolata', monospace; font-size: 11px; color: var(--muted); letter-spacing: 0.06em; text-transform: uppercase; margin-top: 3px; }
   .header-actions { display: flex; gap: 8px; flex-shrink: 0; }
@@ -85,23 +84,20 @@
   .view-btn {
     font-family: 'Inconsolata', monospace; font-size: 11px; padding: 7px 14px;
     background: var(--surface2); color: var(--muted); cursor: pointer; border: none;
-    letter-spacing: 0.06em; text-transform: uppercase; transition: all 0.15s;
-    user-select: none; -webkit-tap-highlight-color: transparent;
+    letter-spacing: 0.06em; text-transform: uppercase; transition: all 0.15s; user-select: none;
   }
   .view-btn.active { background: var(--accent); color: var(--bg); font-weight: 600; }
 
-  .filter-label {
-    font-family: 'Inconsolata', monospace; font-size: 10px; color: var(--muted);
-    text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 5px; margin-top: 10px;
-  }
+  .filter-label { font-family: 'Inconsolata', monospace; font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 5px; margin-top: 10px; }
   .filter-group { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 4px; }
   .filter-btn {
     font-family: 'Inconsolata', monospace; font-size: 11px; padding: 4px 9px;
     border-radius: 4px; border: 1px solid var(--border); background: var(--surface2); color: var(--muted);
-    cursor: pointer; transition: all 0.15s; user-select: none; -webkit-tap-highlight-color: transparent;
+    cursor: pointer; transition: all 0.15s; user-select: none;
   }
   .filter-btn.active { border-color: var(--accent); color: var(--accent); background: #1e1e1e; }
 
+  /* GRID */
   .grid-view { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 14px; }
   .q-done-wrap { grid-column: 1 / -1; }
 
@@ -115,74 +111,144 @@
   .q-fill .q-title { color: #7ab8c8; }
   .q-defer .q-title { color: #c06060; }
   .q-done .q-title { color: var(--muted); }
-  .q-tasks { padding: 8px; display: flex; flex-direction: column; gap: 5px; min-height: 40px; }
-  .q-done .q-tasks { flex-direction: row; flex-wrap: wrap; min-height: 0; gap: 6px; }
+  .q-tasks { padding: 8px; display: flex; flex-direction: column; gap: 6px; min-height: 40px; }
+  .q-done .q-tasks { flex-direction: row; flex-wrap: wrap; gap: 6px; min-height: 0; }
 
-  .list-view { display: flex; flex-direction: column; gap: 7px; margin-top: 14px; }
-
+  /* TASK CHIP */
   .task-chip {
-    border-radius: 6px; padding: 7px 9px;
-    background: var(--surface2); border: 1px solid var(--border); transition: all 0.15s;
+    border-radius: 7px; background: var(--surface2); border: 1px solid var(--border);
+    overflow: hidden; transition: border-color 0.15s;
   }
   .task-chip.hidden { display: none; }
-  .chip-name { font-size: 11px; font-weight: 600; line-height: 1.3; margin-bottom: 4px; cursor: pointer; }
-  .chip-name:hover { color: var(--muted); }
+  .task-chip:hover { border-color: #3a3a3a; }
+
+  .chip-header {
+    padding: 7px 9px; display: flex; align-items: flex-start; gap: 5px; cursor: pointer;
+  }
+
+  .chip-main { flex: 1; min-width: 0; }
+  .chip-name { font-size: 11px; font-weight: 600; line-height: 1.3; margin-bottom: 4px; }
   .chip-meta { display: flex; flex-wrap: wrap; gap: 3px; align-items: center; }
 
-  .done-chip {
-    border-radius: 5px; padding: 5px 8px; background: var(--surface2);
-    border: 1px solid var(--border); opacity: 0.45; cursor: pointer;
-    transition: all 0.15s; display: flex; align-items: center; gap: 6px;
+  .chip-actions { display: flex; gap: 4px; flex-shrink: 0; margin-top: 1px; }
+  .chip-arrow { font-size: 11px; color: var(--muted); transition: transform 0.25s; cursor: pointer; padding: 1px; }
+  .chip-arrow.open { transform: rotate(90deg); }
+  .chip-edit { font-size: 12px; color: var(--muted); cursor: pointer; padding: 1px 2px; transition: color 0.15s; }
+  .chip-edit:hover { color: var(--accent); }
+  .chip-delete { font-size: 10px; color: var(--border); cursor: pointer; padding: 1px 2px; transition: color 0.15s; }
+  .chip-delete:hover { color: #c06060; }
+
+  /* ACCORDION */
+  .chip-steps {
+    max-height: 0; overflow: hidden;
+    transition: max-height 0.3s ease;
+    background: var(--bg);
+    border-top: 0px solid var(--border);
   }
-  .done-chip:hover { opacity: 0.75; }
+  .chip-steps.open {
+    border-top-width: 1px;
+  }
+  .chip-steps-inner { padding: 7px 9px; display: flex; flex-direction: column; gap: 5px; }
+
+  .step-row {
+    display: flex; align-items: center; gap: 7px;
+    padding: 4px 5px; border-radius: 5px; cursor: pointer; transition: background 0.1s;
+  }
+  .step-row:hover { background: var(--surface2); }
+  .step-check {
+    width: 13px; height: 13px; border-radius: 3px; border: 1px solid var(--border);
+    flex-shrink: 0; display: flex; align-items: center; justify-content: center;
+    font-size: 9px; transition: all 0.15s;
+  }
+  .step-check.checked { background: #7ab870; border-color: #7ab870; color: #0a0a0a; }
+  .step-label { font-size: 11px; color: var(--text); }
+  .step-label.done { text-decoration: line-through; color: var(--muted); }
+
+  .chip-steps-footer {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 5px 9px 7px; border-top: 1px solid var(--border); margin-top: 2px;
+  }
+  .add-step-inline {
+    font-family: 'Inconsolata', monospace; font-size: 10px; color: var(--muted);
+    cursor: pointer; letter-spacing: 0.04em; transition: color 0.15s;
+  }
+  .add-step-inline:hover { color: var(--accent); }
+  .collapse-btn {
+    font-family: 'Inconsolata', monospace; font-size: 10px; color: var(--muted);
+    cursor: pointer; transition: color 0.15s;
+  }
+  .collapse-btn:hover { color: var(--accent); }
+
+  /* DONE CHIPS */
+  .done-chip {
+    border-radius: 5px; padding: 4px 8px; background: var(--surface2);
+    border: 1px solid var(--border); opacity: 0.4; cursor: pointer;
+    transition: opacity 0.15s; display: flex; align-items: center; gap: 5px;
+  }
+  .done-chip:hover { opacity: 0.7; }
   .done-chip.hidden { display: none; }
+  .done-chip-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
   .done-chip-name { font-size: 11px; font-weight: 500; text-decoration: line-through; color: var(--muted); }
 
+  /* LIST VIEW */
+  .list-view { display: flex; flex-direction: column; gap: 7px; margin-top: 14px; }
   .task-row {
     background: var(--surface); border: 1px solid var(--border); border-radius: 9px;
-    padding: 11px 13px; transition: all 0.15s; display: flex; align-items: flex-start; gap: 10px;
+    overflow: hidden; transition: border-color 0.15s;
   }
-  .task-row:hover { border-color: var(--muted); }
-  .task-row.done { opacity: 0.3; }
+  .task-row:hover { border-color: #3a3a3a; }
   .task-row.hidden { display: none; }
+  .task-row.done { opacity: 0.3; }
+
+  .row-header { padding: 11px 13px; display: flex; align-items: flex-start; gap: 10px; }
   .row-check {
     width: 16px; height: 16px; border-radius: 4px; border: 1.5px solid var(--border);
     flex-shrink: 0; margin-top: 1px; display: flex; align-items: center; justify-content: center;
     font-size: 9px; cursor: pointer; transition: all 0.15s;
   }
   .task-row.done .row-check { background: var(--muted); border-color: var(--muted); color: var(--bg); }
-  .row-body { flex: 1; }
+  .row-body { flex: 1; min-width: 0; }
   .row-name { font-size: 14px; font-weight: 600; margin-bottom: 5px; line-height: 1.25; }
   .row-name.done-text { text-decoration: line-through; color: var(--muted); }
   .row-meta { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; }
+  .row-actions { display: flex; gap: 5px; flex-shrink: 0; margin-top: 1px; }
 
+  .row-steps { background: var(--bg); border-top: 1px solid var(--border); padding: 8px 13px; display: flex; flex-direction: column; gap: 5px; }
+  .row-steps.hidden { display: none; }
+
+  /* TAGS / PIPS */
   .tag { font-family: 'Inconsolata', monospace; font-size: 9px; padding: 1px 5px; border-radius: 3px; letter-spacing: 0.04em; }
-
-  .imp-bar {
-    display: flex; gap: 2px; align-items: center; margin-left: auto;
-    cursor: pointer; padding: 3px 4px; border-radius: 3px; transition: background 0.15s;
-  }
+  .imp-bar { display: flex; gap: 2px; align-items: center; margin-left: auto; cursor: pointer; padding: 3px 4px; border-radius: 3px; transition: background 0.15s; }
   .imp-bar:hover { background: var(--border); }
-  .imp-pip { width: 5px; height: 14px; border-radius: 2px; transition: background 0.15s; }
+  .imp-pip { width: 5px; height: 14px; border-radius: 2px; }
 
-  /* POPOVER */
+  /* IMP POPOVER */
   .imp-popover {
     display: none; position: fixed; z-index: 200;
     background: var(--surface); border: 1px solid var(--border);
-    border-radius: 8px; padding: 6px;
-    flex-direction: column; gap: 2px;
+    border-radius: 8px; padding: 6px; flex-direction: column; gap: 2px;
     box-shadow: 0 4px 24px rgba(0,0,0,0.6);
   }
   .imp-popover.open { display: flex; }
   .imp-pop-opt {
-    font-family: 'Inconsolata', monospace; font-size: 12px;
-    padding: 6px 10px; border-radius: 4px; cursor: pointer;
-    display: flex; align-items: center; gap: 8px; transition: background 0.1s; white-space: nowrap;
+    font-family: 'Inconsolata', monospace; font-size: 12px; padding: 6px 10px;
+    border-radius: 4px; cursor: pointer; display: flex; align-items: center; gap: 8px;
+    transition: background 0.1s; white-space: nowrap; color: var(--text);
   }
   .imp-pop-opt:hover { background: var(--surface2); }
   .imp-pop-swatch { width: 8px; height: 8px; border-radius: 2px; flex-shrink: 0; }
 
-  /* MODAL */
+  /* LEGEND */
+  .legend { margin-top: 20px; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; }
+  .legend-section { margin-bottom: 10px; }
+  .legend-title { font-family: 'Inconsolata', monospace; font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 6px; }
+  .legend-row { display: flex; flex-wrap: wrap; gap: 8px; }
+  .legend-item { display: flex; align-items: center; gap: 5px; font-family: 'Inconsolata', monospace; font-size: 11px; color: var(--muted); }
+  .legend-swatch { width: 10px; height: 10px; border-radius: 2px; }
+  .done-count { font-family: 'Inconsolata', monospace; font-size: 11px; color: var(--muted); text-align: right; margin-top: 14px; }
+  .done-count span { color: var(--accent); }
+
+  /* MODALS */
   .modal-overlay {
     display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8);
     z-index: 100; align-items: flex-end; justify-content: center;
@@ -214,14 +280,30 @@
   .btn-cancel { padding: 12px 18px; background: transparent; color: var(--muted); border: 1px solid var(--border); border-radius: 8px; font-family: 'Syne', sans-serif; font-size: 14px; cursor: pointer; transition: all 0.15s; }
   .btn-cancel:hover { border-color: var(--muted); color: var(--text); }
 
-  .legend { margin-top: 20px; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; }
-  .legend-section { margin-bottom: 10px; }
-  .legend-title { font-family: 'Inconsolata', monospace; font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 6px; }
-  .legend-row { display: flex; flex-wrap: wrap; gap: 8px; }
-  .legend-item { display: flex; align-items: center; gap: 5px; font-family: 'Inconsolata', monospace; font-size: 11px; color: var(--muted); }
-  .legend-swatch { width: 10px; height: 10px; border-radius: 2px; }
-  .done-count { font-family: 'Inconsolata', monospace; font-size: 11px; color: var(--muted); text-align: right; margin-top: 14px; }
-  .done-count span { color: var(--accent); }
+  /* STEPS IN MODAL */
+  .step-input-row { display: flex; align-items: center; gap: 6px; margin-bottom: 5px; }
+  .step-input { flex: 1; background: var(--surface2); border: 1px solid var(--border); border-radius: 6px; padding: 7px 9px; color: var(--text); font-family: 'Syne', sans-serif; font-size: 13px; outline: none; transition: border-color 0.15s; }
+  .step-input:focus { border-color: var(--accent); }
+  .step-input-del { font-size: 11px; color: var(--border); cursor: pointer; padding: 4px; transition: color 0.15s; flex-shrink: 0; }
+  .step-input-del:hover { color: #c06060; }
+  .add-step-btn { font-family: 'Inconsolata', monospace; font-size: 11px; color: var(--muted); cursor: pointer; padding: 4px 0; display: flex; align-items: center; gap: 5px; transition: color 0.15s; margin-top: 2px; }
+  .add-step-btn:hover { color: var(--accent); }
+
+  /* EDIT PANEL */
+  .edit-overlay {
+    display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8);
+    z-index: 150; align-items: flex-end; justify-content: center;
+  }
+  .edit-overlay.open { display: flex; }
+  .edit-panel {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 16px 16px 0 0; padding: 20px 16px 36px;
+    width: 100%; max-width: 480px; max-height: 92vh; overflow-y: auto;
+  }
+  .edit-panel h2 { font-size: 17px; font-weight: 700; color: var(--accent); margin-bottom: 18px; display: flex; align-items: center; gap: 10px; }
+  .edit-back { font-size: 14px; cursor: pointer; color: var(--muted); transition: color 0.15s; }
+  .edit-back:hover { color: var(--accent); }
+
   .config-notice { background: #1a1a1a; border: 1px solid #333; border-radius: 10px; padding: 14px 16px; margin-bottom: 16px; font-family: 'Inconsolata', monospace; font-size: 12px; color: #909090; line-height: 1.6; }
   .config-notice strong { color: var(--accent); }
   .config-notice code { background: #0f0f0f; padding: 1px 5px; border-radius: 3px; font-size: 11px; }
@@ -235,13 +317,13 @@
     <p>Dave's command center</p>
   </div>
   <div class="header-actions">
-    <div class="icon-btn" onclick="openModal()" title="Add task">＋</div>
+    <div class="icon-btn" onclick="openAddModal()" title="Add task">＋</div>
     <div class="icon-btn" onclick="syncFromSheet()" title="Sync">↻</div>
   </div>
 </header>
 
 <div class="config-notice" id="configNotice" style="display:none">
-  <strong>Setup needed:</strong> Open <code>config.js</code> and paste your Apps Script URL as <code>SCRIPT_URL</code>. Then reload this page.
+  <strong>Setup needed:</strong> Open <code>config.js</code> and paste your Apps Script URL as <code>SCRIPT_URL</code>.
 </div>
 
 <div class="status-bar">
@@ -334,7 +416,7 @@
 </div>
 
 <!-- ADD TASK MODAL -->
-<div class="modal-overlay" id="modalOverlay" onclick="closeModalIfBg(event)">
+<div class="modal-overlay" id="addModalOverlay" onclick="closeAddModalIfBg(event)">
   <div class="modal">
     <h2>Add Task</h2>
     <div class="form-field">
@@ -378,29 +460,97 @@
         <div class="imp-opt" onclick="selectImp(5,this)">5</div>
       </div>
     </div>
+    <div class="form-field">
+      <label class="form-label">Steps (optional)</label>
+      <div id="newStepsList"></div>
+      <div class="add-step-btn" onclick="addNewStep()"><span style="font-size:14px">＋</span> Add a step</div>
+    </div>
     <div class="modal-actions">
-      <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+      <button class="btn-cancel" onclick="closeAddModal()">Cancel</button>
       <button class="btn-primary" onclick="submitTask()">Add Task</button>
+    </div>
+  </div>
+</div>
+
+<!-- EDIT TASK PANEL -->
+<div class="edit-overlay" id="editOverlay" onclick="closeEditIfBg(event)">
+  <div class="edit-panel">
+    <h2><span class="edit-back" onclick="closeEdit()">←</span> Edit Task</h2>
+    <div class="form-field">
+      <label class="form-label">Task name</label>
+      <input class="form-input" id="editName" type="text">
+    </div>
+    <div class="form-field">
+      <label class="form-label">Time to complete</label>
+      <div class="btn-group" id="editTimeOpts">
+        <div class="opt-btn" onclick="selectEditOpt('time','30 min',this)">30 min</div>
+        <div class="opt-btn" onclick="selectEditOpt('time','2 hours',this)">2 hours</div>
+        <div class="opt-btn" onclick="selectEditOpt('time','Full day',this)">Full day</div>
+        <div class="opt-btn" onclick="selectEditOpt('time','Open ended',this)">Open ended</div>
+      </div>
+    </div>
+    <div class="form-field">
+      <label class="form-label">Type of work</label>
+      <div class="btn-group" id="editTypeOpts">
+        <div class="opt-btn" onclick="selectEditOpt('type','Physical',this)">Physical</div>
+        <div class="opt-btn" onclick="selectEditOpt('type','Computer',this)">Computer</div>
+      </div>
+    </div>
+    <div class="form-field">
+      <label class="form-label">Category</label>
+      <div class="btn-group" id="editCatOpts">
+        <div class="opt-btn" onclick="selectEditOpt('cat','Home',this)">Home</div>
+        <div class="opt-btn" onclick="selectEditOpt('cat','Yard',this)">Yard</div>
+        <div class="opt-btn" onclick="selectEditOpt('cat','Vehicles',this)">Vehicles</div>
+        <div class="opt-btn" onclick="selectEditOpt('cat','Tech',this)">Tech</div>
+        <div class="opt-btn" onclick="selectEditOpt('cat','Family',this)">Family</div>
+        <div class="opt-btn" onclick="selectEditOpt('cat','Hobby',this)">Hobby</div>
+      </div>
+    </div>
+    <div class="form-field">
+      <label class="form-label">Importance</label>
+      <div class="imp-opts" id="editImpOpts">
+        <div class="imp-opt" onclick="selectEditImp(1,this)">1</div>
+        <div class="imp-opt" onclick="selectEditImp(2,this)">2</div>
+        <div class="imp-opt" onclick="selectEditImp(3,this)">3</div>
+        <div class="imp-opt" onclick="selectEditImp(4,this)">4</div>
+        <div class="imp-opt" onclick="selectEditImp(5,this)">5</div>
+      </div>
+    </div>
+    <div class="form-field">
+      <label class="form-label">Steps</label>
+      <div id="editStepsList"></div>
+      <div class="add-step-btn" onclick="addEditStep()"><span style="font-size:14px">＋</span> Add a step</div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeEdit()">Cancel</button>
+      <button class="btn-primary" onclick="saveEdit()">Save</button>
     </div>
   </div>
 </div>
 
 <script src="config.js"></script>
 <script>
-const CACHE_KEY = 'taskmap_cache';
+const CACHE_KEY = 'taskmap_v2';
 
 if (typeof SCRIPT_URL === 'undefined' || SCRIPT_URL === 'YOUR_APPS_SCRIPT_URL_HERE') {
   document.getElementById('configNotice').style.display = 'block';
   setStatus('error', 'Not configured');
 }
 
+// ---- STATE ----
 let tasks = [];
 let currentView = 'grid';
 let activeType = 'All';
 let activeCat = 'All';
 let popoverTaskId = null;
-const newTask = { time: null, type: null, cat: null, imp: null };
+let editTaskId = null;
+let openAccordions = new Set();
 
+const newTask = { time: null, type: null, cat: null, imp: null };
+const editTask = { time: null, type: null, cat: null, imp: null };
+
+// ---- COLORS ----
 const catColors = { Home:'var(--cat-home)', Yard:'var(--cat-yard)', Vehicles:'var(--cat-vehicles)', Tech:'var(--cat-tech)', Family:'var(--cat-family)', Admin:'var(--cat-admin)', Hobby:'var(--cat-hobby)' };
 const impColors = {1:'var(--imp1)',2:'var(--imp2)',3:'var(--imp3)',4:'var(--imp4)',5:'var(--imp5)'};
 const typeColors = {Physical:'var(--physical)',Computer:'var(--computer)'};
@@ -434,7 +584,8 @@ async function syncFromSheet() {
     tasks = (data.tasks || []).map(t => ({
       ...t,
       Done: t.Done === true || t.Done === 'TRUE',
-      Importance: parseInt(t.Importance) || 3
+      Importance: parseInt(t.Importance) || 3,
+      Steps: parseSteps(t.Steps)
     }));
     saveCache(tasks);
     setStatus('live', `Synced · ${tasks.length} tasks`);
@@ -442,6 +593,12 @@ async function syncFromSheet() {
   } catch(err) {
     setStatus('error', tasks.length ? 'Offline — cached data' : 'Sync failed');
   }
+}
+
+function parseSteps(raw) {
+  if (!raw) return [];
+  if (Array.isArray(raw)) return raw;
+  try { return JSON.parse(raw); } catch(e) { return []; }
 }
 
 function quadrant(task) {
@@ -455,7 +612,7 @@ function quadrant(task) {
 
 function impPipsHTML(taskId, imp) {
   imp = parseInt(imp);
-  let html = `<div class="imp-bar" onclick="openImpPopover(event,${taskId})" title="Tap to change importance">`;
+  let html = `<div class="imp-bar" onclick="openImpPopover(event,${taskId})" title="Tap to change">`;
   for (let i = 1; i <= 5; i++) {
     const col = i <= imp ? impColors[imp] : 'var(--border)';
     html += `<div class="imp-pip" style="background:${col}"></div>`;
@@ -473,12 +630,20 @@ function tagHTML(task) {
   `;
 }
 
+function stepProgressTag(task) {
+  const steps = task.Steps || [];
+  if (!steps.length) return '';
+  const done = steps.filter(s => s.done).length;
+  return `<span class="tag" style="background:var(--surface2);color:var(--muted);border:1px solid var(--border)">${done}/${steps.length} steps</span>`;
+}
+
 function isHidden(task) {
   if (activeType !== 'All' && task.Type !== activeType) return true;
   if (activeCat !== 'All' && task.Category !== activeCat) return true;
   return false;
 }
 
+// ---- RENDER ----
 function render() {
   const active = tasks.filter(t => !t.Done).sort((a,b) => b.Importance - a.Importance);
   const done = tasks.filter(t => t.Done);
@@ -491,13 +656,58 @@ function render() {
   active.forEach(task => {
     const q = quadrant(task);
     const hidden = isHidden(task);
+    const hasSteps = task.Steps && task.Steps.length > 0;
+    const isOpen = openAccordions.has(task.ID);
+
     const chip = document.createElement('div');
     chip.className = `task-chip${hidden?' hidden':''}`;
+    chip.id = `chip-${task.ID}`;
+
     chip.innerHTML = `
-      <div class="chip-name">${task.Task}</div>
-      <div class="chip-meta">${tagHTML(task)}${impPipsHTML(task.ID, task.Importance)}</div>
+      <div class="chip-header">
+        <div class="chip-main">
+          <div class="chip-name">${task.Task}</div>
+          <div class="chip-meta">${tagHTML(task)}${stepProgressTag(task)}${impPipsHTML(task.ID, task.Importance)}</div>
+        </div>
+        <div class="chip-actions">
+          ${hasSteps ? `<div class="chip-arrow${isOpen?' open':''}" id="arrow-${task.ID}">▸</div>` : ''}
+          <div class="chip-edit" title="Edit">✎</div>
+          <div class="chip-delete" title="Delete">✕</div>
+        </div>
+      </div>
+      <div class="chip-steps${isOpen?' open':''}" id="steps-${task.ID}" style="max-height:${isOpen?'500px':'0'}">
+        <div class="chip-steps-inner" id="steps-inner-${task.ID}">
+          ${renderStepsHTML(task)}
+          <div class="chip-steps-footer">
+            <div class="add-step-inline">＋ add step</div>
+            <div class="collapse-btn">▴ collapse</div>
+          </div>
+        </div>
+      </div>
     `;
-    chip.querySelector('.chip-name').onclick = () => toggleDone(task);
+
+    // Wire up events
+    if (hasSteps) {
+      chip.querySelector('.chip-arrow').onclick = (e) => { e.stopPropagation(); toggleAccordion(task.ID); };
+      chip.querySelector('.chip-header').onclick = (e) => {
+        if (!e.target.closest('.chip-actions') && !e.target.closest('.imp-bar')) toggleAccordion(task.ID);
+      };
+    } else {
+      chip.querySelector('.chip-header').onclick = (e) => {
+        if (!e.target.closest('.chip-actions') && !e.target.closest('.imp-bar')) toggleDone(task);
+      };
+    }
+
+    chip.querySelector('.chip-edit').onclick = (e) => { e.stopPropagation(); openEdit(task.ID); };
+    chip.querySelector('.chip-delete').onclick = (e) => { e.stopPropagation(); deleteTask(task); };
+    chip.querySelector('.add-step-inline').onclick = (e) => { e.stopPropagation(); openEdit(task.ID); };
+    chip.querySelector('.collapse-btn').onclick = (e) => { e.stopPropagation(); toggleAccordion(task.ID); };
+
+    // Wire step checkboxes
+    chip.querySelectorAll('.step-check').forEach((el, i) => {
+      el.onclick = (e) => { e.stopPropagation(); toggleStep(task.ID, i); };
+    });
+
     document.getElementById(`q-${q}`).appendChild(chip);
   });
 
@@ -506,32 +716,62 @@ function render() {
     document.getElementById(`count-${q}`).textContent = count || '';
   });
 
+  // Done section
   const doneEl = document.getElementById('q-done');
   done.forEach(task => {
     const hidden = isHidden(task);
     const chip = document.createElement('div');
     chip.className = `done-chip${hidden?' hidden':''}`;
     const cc = catColors[task.Category] || 'var(--muted)';
-    chip.innerHTML = `<div style="width:6px;height:6px;border-radius:50%;background:${cc};flex-shrink:0"></div><div class="done-chip-name">${task.Task}</div>`;
+    chip.innerHTML = `<div class="done-chip-dot" style="background:${cc}"></div><div class="done-chip-name">${task.Task}</div>`;
     chip.onclick = () => toggleDone(task);
     doneEl.appendChild(chip);
   });
   document.getElementById('count-done').textContent = done.length || '';
 
+  // List view
   const listEl = document.getElementById('listView');
   listEl.innerHTML = '';
   [...active, ...done].forEach(task => {
     const hidden = isHidden(task);
+    const hasSteps = task.Steps && task.Steps.length > 0;
+    const isOpen = openAccordions.has(task.ID);
+
     const row = document.createElement('div');
     row.className = `task-row${task.Done?' done':''}${hidden?' hidden':''}`;
+
     row.innerHTML = `
-      <div class="row-check">${task.Done?'✓':''}</div>
-      <div class="row-body">
-        <div class="row-name${task.Done?' done-text':''}">${task.Task}</div>
-        <div class="row-meta">${tagHTML(task)}${impPipsHTML(task.ID, task.Importance)}</div>
+      <div class="row-header">
+        <div class="row-check">${task.Done?'✓':''}</div>
+        <div class="row-body">
+          <div class="row-name${task.Done?' done-text':''}">${task.Task}</div>
+          <div class="row-meta">${tagHTML(task)}${stepProgressTag(task)}${impPipsHTML(task.ID, task.Importance)}</div>
+        </div>
+        <div class="row-actions">
+          ${hasSteps ? `<div class="chip-arrow${isOpen?' open':''}" style="font-size:12px;color:var(--muted);cursor:pointer;transition:transform 0.25s;" id="row-arrow-${task.ID}">▸</div>` : ''}
+          <div class="chip-edit" title="Edit">✎</div>
+          <div class="chip-delete" title="Delete">✕</div>
+        </div>
+      </div>
+      <div class="row-steps${isOpen?'':' hidden'}" id="row-steps-${task.ID}">
+        ${renderStepsHTML(task)}
+        <div class="add-step-inline" style="padding:4px 0; margin-top:2px;">＋ add step</div>
       </div>
     `;
+
     row.querySelector('.row-check').onclick = (e) => { e.stopPropagation(); toggleDone(task); };
+    row.querySelector('.chip-edit').onclick = (e) => { e.stopPropagation(); openEdit(task.ID); };
+    row.querySelector('.chip-delete').onclick = (e) => { e.stopPropagation(); deleteTask(task); };
+    row.querySelector('.add-step-inline').onclick = (e) => { e.stopPropagation(); openEdit(task.ID); };
+
+    if (hasSteps) {
+      row.querySelector(`#row-arrow-${task.ID}`).onclick = (e) => { e.stopPropagation(); toggleAccordion(task.ID); };
+    }
+
+    row.querySelectorAll('.step-check').forEach((el, i) => {
+      el.onclick = (e) => { e.stopPropagation(); toggleStep(task.ID, i); };
+    });
+
     listEl.appendChild(row);
   });
 
@@ -539,17 +779,91 @@ function render() {
   document.getElementById('doneCount').innerHTML = `<span>${doneCount}</span> / ${tasks.length} complete`;
 }
 
+function renderStepsHTML(task) {
+  if (!task.Steps || !task.Steps.length) return '';
+  return task.Steps.map((step, i) => `
+    <div class="step-row">
+      <div class="step-check${step.done?' checked':''}">
+        ${step.done ? '✓' : ''}
+      </div>
+      <div class="step-label${step.done?' done':''}">${step.text}</div>
+    </div>
+  `).join('');
+}
+
+// ---- ACCORDION ----
+function toggleAccordion(taskId) {
+  const panel = document.getElementById(`steps-${taskId}`);
+  const arrow = document.getElementById(`arrow-${taskId}`);
+  const rowPanel = document.getElementById(`row-steps-${taskId}`);
+  const rowArrow = document.getElementById(`row-arrow-${taskId}`);
+
+  const isOpen = openAccordions.has(taskId);
+  if (isOpen) {
+    openAccordions.delete(taskId);
+    if (panel) { panel.style.maxHeight = '0'; panel.classList.remove('open'); }
+    if (arrow) arrow.classList.remove('open');
+    if (rowPanel) rowPanel.classList.add('hidden');
+    if (rowArrow) rowArrow.style.transform = '';
+  } else {
+    openAccordions.add(taskId);
+    if (panel) { panel.style.maxHeight = '500px'; panel.classList.add('open'); }
+    if (arrow) arrow.classList.add('open');
+    if (rowPanel) rowPanel.classList.remove('hidden');
+    if (rowArrow) rowArrow.style.transform = 'rotate(90deg)';
+  }
+}
+
+// ---- TOGGLE STEP ----
+async function toggleStep(taskId, stepIndex) {
+  const t = tasks.find(x => x.ID === taskId);
+  if (!t || !t.Steps) return;
+  t.Steps[stepIndex].done = !t.Steps[stepIndex].done;
+
+  // If all steps done, mark task done
+  if (t.Steps.every(s => s.done)) t.Done = true;
+
+  saveCache(tasks);
+  render();
+  // Re-open accordion after render
+  if (!t.Done) openAccordions.add(taskId);
+  persistTask(t);
+}
+
+// ---- TOGGLE DONE ----
 async function toggleDone(task) {
   const t = tasks.find(x => x.ID === task.ID);
   if (!t) return;
   t.Done = !t.Done;
+  if (!t.Done && t.Steps) t.Steps.forEach(s => s.done = false);
   saveCache(tasks);
   render();
+  persistTask(t);
+}
+
+async function persistTask(t) {
   try {
-    await fetch(SCRIPT_URL, { redirect:'follow', method:'POST', body: JSON.stringify({ action:'updateTask', task: {...t, done: t.Done} }) });
+    await fetch(SCRIPT_URL, {
+      redirect:'follow', method:'POST',
+      body: JSON.stringify({ action:'updateTask', task: {
+        ...t, done: t.Done, steps: JSON.stringify(t.Steps || [])
+      }})
+    });
   } catch(e) {}
 }
 
+// ---- DELETE ----
+async function deleteTask(task) {
+  if (!confirm(`Delete "${task.Task}"?`)) return;
+  tasks = tasks.filter(x => x.ID !== task.ID);
+  saveCache(tasks);
+  render();
+  try {
+    await fetch(SCRIPT_URL, { redirect:'follow', method:'POST', body: JSON.stringify({ action:'deleteTask', id: task.ID }) });
+  } catch(e) {}
+}
+
+// ---- IMPORTANCE POPOVER ----
 function openImpPopover(e, taskId) {
   e.stopPropagation();
   popoverTaskId = taskId;
@@ -568,9 +882,7 @@ async function setImp(val) {
   saveCache(tasks);
   closePopover();
   render();
-  try {
-    await fetch(SCRIPT_URL, { redirect:'follow', method:'POST', body: JSON.stringify({ action:'updateTask', task: {...t, importance: val, done: t.Done} }) });
-  } catch(e) {}
+  persistTask(t);
 }
 
 function closePopover() {
@@ -582,6 +894,7 @@ document.addEventListener('click', (e) => {
   if (!e.target.closest('.imp-bar') && !e.target.closest('.imp-popover')) closePopover();
 });
 
+// ---- VIEW / FILTER ----
 function setView(v) {
   currentView = v;
   document.getElementById('gridView').style.display = v==='grid'?'grid':'none';
@@ -596,9 +909,10 @@ function toggleFilter(filterType, value, el) {
   render();
 }
 
-function openModal() { document.getElementById('modalOverlay').classList.add('open'); }
-function closeModal() { document.getElementById('modalOverlay').classList.remove('open'); resetForm(); }
-function closeModalIfBg(e) { if (e.target===document.getElementById('modalOverlay')) closeModal(); }
+// ---- ADD MODAL ----
+function openAddModal() { document.getElementById('addModalOverlay').classList.add('open'); }
+function closeAddModal() { document.getElementById('addModalOverlay').classList.remove('open'); resetAddForm(); }
+function closeAddModalIfBg(e) { if (e.target===document.getElementById('addModalOverlay')) closeAddModal(); }
 
 function selectOpt(field, value, el) {
   newTask[field] = value;
@@ -613,8 +927,27 @@ function selectImp(val, el) {
   el.classList.add(`sel-${val}`);
 }
 
-function resetForm() {
+function addNewStep() {
+  const container = document.getElementById('newStepsList');
+  const div = document.createElement('div');
+  div.className = 'step-input-row';
+  div.innerHTML = `
+    <input type="text" class="step-input" placeholder="Step description...">
+    <div class="step-input-del" onclick="this.parentElement.remove()">✕</div>
+  `;
+  container.appendChild(div);
+  div.querySelector('input').focus();
+}
+
+function getNewSteps() {
+  return Array.from(document.querySelectorAll('#newStepsList .step-input'))
+    .map(i => i.value.trim()).filter(Boolean)
+    .map(text => ({ text, done: false }));
+}
+
+function resetAddForm() {
   document.getElementById('newName').value = '';
+  document.getElementById('newStepsList').innerHTML = '';
   ['timeOpts','typeOpts','catOpts'].forEach(id => document.getElementById(id).querySelectorAll('.opt-btn').forEach(b => b.classList.remove('sel')));
   document.getElementById('impOpts').querySelectorAll('.imp-opt').forEach(b => b.className='imp-opt');
   newTask.time = newTask.type = newTask.cat = newTask.imp = null;
@@ -623,14 +956,128 @@ function resetForm() {
 async function submitTask() {
   const name = document.getElementById('newName').value.trim();
   if (!name) { alert('Please enter a task name.'); return; }
-  const task = { name, time: newTask.time||'Open ended', type: newTask.type||'Physical', category: newTask.cat||'Home', importance: newTask.imp||3 };
+  const steps = getNewSteps();
+  const task = {
+    name, time: newTask.time||'Open ended', type: newTask.type||'Physical',
+    category: newTask.cat||'Home', importance: newTask.imp||3,
+    steps: JSON.stringify(steps)
+  };
   try {
     await fetch(SCRIPT_URL, { redirect:'follow', method:'POST', body: JSON.stringify({action:'addTask', task}) });
-    closeModal();
+    closeAddModal();
     await syncFromSheet();
   } catch(e) { alert('Could not save task.'); }
 }
 
+// ---- EDIT PANEL ----
+function openEdit(taskId) {
+  const t = tasks.find(x => x.ID === taskId);
+  if (!t) return;
+  editTaskId = taskId;
+
+  document.getElementById('editName').value = t.Task;
+
+  // Set time
+  document.getElementById('editTimeOpts').querySelectorAll('.opt-btn').forEach(b => {
+    b.classList.toggle('sel', b.textContent === t.Time);
+  });
+  editTask.time = t.Time;
+
+  // Set type
+  document.getElementById('editTypeOpts').querySelectorAll('.opt-btn').forEach(b => {
+    b.classList.toggle('sel', b.textContent === t.Type);
+  });
+  editTask.type = t.Type;
+
+  // Set category
+  document.getElementById('editCatOpts').querySelectorAll('.opt-btn').forEach(b => {
+    b.classList.toggle('sel', b.textContent === t.Category);
+  });
+  editTask.cat = t.Category;
+
+  // Set importance
+  document.getElementById('editImpOpts').querySelectorAll('.imp-opt').forEach((b, i) => {
+    b.className = 'imp-opt';
+    if (i + 1 === t.Importance) b.classList.add(`sel-${t.Importance}`);
+  });
+  editTask.imp = t.Importance;
+
+  // Populate steps
+  const stepsList = document.getElementById('editStepsList');
+  stepsList.innerHTML = '';
+  (t.Steps || []).forEach(step => {
+    const div = document.createElement('div');
+    div.className = 'step-input-row';
+    div.innerHTML = `
+      <div class="step-check${step.done?' checked':''}" onclick="toggleEditStepDone(this)">${step.done?'✓':''}</div>
+      <input type="text" class="step-input" value="${step.text}">
+      <div class="step-input-del" onclick="this.parentElement.remove()">✕</div>
+    `;
+    stepsList.appendChild(div);
+  });
+
+  document.getElementById('editOverlay').classList.add('open');
+}
+
+function toggleEditStepDone(el) {
+  const isDone = el.classList.contains('checked');
+  if (isDone) { el.classList.remove('checked'); el.textContent = ''; }
+  else { el.classList.add('checked'); el.textContent = '✓'; }
+}
+
+function closeEdit() { document.getElementById('editOverlay').classList.remove('open'); editTaskId = null; }
+function closeEditIfBg(e) { if (e.target===document.getElementById('editOverlay')) closeEdit(); }
+
+function selectEditOpt(field, value, el) {
+  editTask[field] = value;
+  const groupId = {time:'editTimeOpts',type:'editTypeOpts',cat:'editCatOpts'}[field];
+  document.getElementById(groupId).querySelectorAll('.opt-btn').forEach(b => b.classList.remove('sel'));
+  el.classList.add('sel');
+}
+
+function selectEditImp(val, el) {
+  editTask.imp = val;
+  document.getElementById('editImpOpts').querySelectorAll('.imp-opt').forEach(b => b.className='imp-opt');
+  el.classList.add(`sel-${val}`);
+}
+
+function addEditStep() {
+  const container = document.getElementById('editStepsList');
+  const div = document.createElement('div');
+  div.className = 'step-input-row';
+  div.innerHTML = `
+    <div class="step-check" onclick="toggleEditStepDone(this)"></div>
+    <input type="text" class="step-input" placeholder="Step description...">
+    <div class="step-input-del" onclick="this.parentElement.remove()">✕</div>
+  `;
+  container.appendChild(div);
+  div.querySelector('input').focus();
+}
+
+async function saveEdit() {
+  const t = tasks.find(x => x.ID === editTaskId);
+  if (!t) return;
+
+  t.Task = document.getElementById('editName').value.trim() || t.Task;
+  t.Time = editTask.time || t.Time;
+  t.Type = editTask.type || t.Type;
+  t.Category = editTask.cat || t.Category;
+  t.Importance = editTask.imp || t.Importance;
+
+  // Collect steps
+  const stepRows = document.querySelectorAll('#editStepsList .step-input-row');
+  t.Steps = Array.from(stepRows).map(row => ({
+    text: row.querySelector('.step-input').value.trim(),
+    done: row.querySelector('.step-check').classList.contains('checked')
+  })).filter(s => s.text);
+
+  saveCache(tasks);
+  closeEdit();
+  render();
+  persistTask(t);
+}
+
+// ---- INIT ----
 loadTasks();
 </script>
 </body>
