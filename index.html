@@ -8,30 +8,30 @@
   @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700&family=Inconsolata:wght@400;500&display=swap');
 
   :root {
-    --bg: #0a0a0a;
-    --surface: #141414;
-    --surface2: #1e1e1e;
-    --border: #2a2a2a;
+    --bg: #000000;
+    --surface: #0d0d0d;
+    --surface2: #1a1a1a;
+    --border: #222222;
     --accent: #d0d0d0;
-    --text: #e8e8e8;
-    --muted: #606060;
+    --text: #f0f0f0;
+    --muted: #555555;
 
-    --imp5: #e05a3a;
-    --imp4: #d4902a;
-    --imp3: #c8c040;
-    --imp2: #7ab870;
-    --imp1: #6090b0;
+    --imp5: #e05050;
+    --imp4: #d08020;
+    --imp3: #c0a020;
+    --imp2: #3abf60;
+    --imp1: #2a6abf;
 
-    --physical: #b07ab8;
-    --computer: #7ab8c8;
+    --physical: #3d1a6b;
+    --computer: #0f2744;
 
-    --cat-home: #e07850;
-    --cat-yard: #78b858;
-    --cat-vehicles: #5890d8;
-    --cat-tech: #9878d8;
-    --cat-family: #d87898;
-    --cat-admin: #d8b858;
-    --cat-hobby: #78c8b8;
+    --cat-home: #e05050;
+    --cat-yard: #3abf60;
+    --cat-vehicles: #2a6abf;
+    --cat-tech: #8a40d0;
+    --cat-family: #d4a020;
+    --cat-admin: #d4a020;
+    --cat-hobby: #20a890;
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -622,11 +622,11 @@ function impPipsHTML(taskId, imp) {
 
 function tagHTML(task) {
   const cc = catColors[task.Category] || 'var(--muted)';
-  const tc = typeColors[task.Type] || 'var(--muted)';
+  const icon = task.Type === 'Physical' ? '🔧' : '🖥️';
   return `
     <span class="tag" style="background:${cc}22;color:${cc};border:1px solid ${cc}44">${task.Category}</span>
-    <span class="tag" style="background:${tc}22;color:${tc};border:1px solid ${tc}44">${task.Type}</span>
     <span class="tag" style="background:var(--surface2);color:var(--muted);border:1px solid var(--border)">${task.Time}</span>
+    <span style="font-size:11px; margin-left:2px;" title="${task.Type}">${icon}</span>
   `;
 }
 
