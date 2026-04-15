@@ -130,12 +130,12 @@
 
   .chip-main { flex: 1; min-width: 0; }
   .chip-name { font-size: 11px; font-weight: 600; line-height: 1.3; margin-bottom: 4px; }
-  .chip-meta { display: flex; flex-direction: column; gap: 5px; }
-  .chip-meta-tags { display: flex; flex-wrap: wrap; gap: 3px; align-items: center; }
-  .chip-meta-right { display: flex; align-items: center; justify-content: flex-end; gap: 4px; }
-  .row-meta { display: flex; flex-direction: column; gap: 5px; }
-  .row-meta-tags { display: flex; flex-wrap: wrap; gap: 3px; align-items: center; }
-  .row-meta-right { display: flex; align-items: center; justify-content: flex-end; gap: 4px; }
+  .chip-meta { width: 100%; border-collapse: collapse; }
+  .chip-meta-tags { width: 100%; vertical-align: middle; padding: 0; }
+  .chip-meta-right { white-space: nowrap; vertical-align: middle; text-align: right; padding: 0; padding-left: 6px; }
+  .row-meta { width: 100%; border-collapse: collapse; }
+  .row-meta-tags { width: 100%; vertical-align: middle; padding: 0; }
+  .row-meta-right { white-space: nowrap; vertical-align: middle; text-align: right; padding: 0; padding-left: 6px; }
 
   .chip-actions { display: flex; gap: 4px; flex-shrink: 0; margin-top: 1px; }
   .chip-arrow { font-size: 11px; color: var(--muted); transition: transform 0.25s; cursor: pointer; padding: 1px; }
@@ -677,10 +677,10 @@ function render() {
       <div class="chip-header">
         <div class="chip-main">
           <div class="chip-name">${task.Task}</div>
-          <div class="chip-meta">
-            <div class="chip-meta-tags">${tagHTML(task)}${stepProgressTag(task)}</div>
-            <div class="chip-meta-right">${impPipsHTML(task.ID, task.Importance)}${typeIconHTML(task)}</div>
-          </div>
+          <table class="chip-meta"><tr>
+            <td class="chip-meta-tags">${tagHTML(task)}${stepProgressTag(task)}</td>
+            <td class="chip-meta-right">${impPipsHTML(task.ID, task.Importance)}${typeIconHTML(task)}</td>
+          </tr></table>
         </div>
         <div class="chip-actions">
           ${hasSteps ? `<div class="chip-arrow${isOpen?' open':''}" id="arrow-${task.ID}">▸</div>` : ''}
@@ -758,10 +758,10 @@ function render() {
         <div class="row-check">${task.Done?'✓':''}</div>
         <div class="row-body">
           <div class="row-name${task.Done?' done-text':''}">${task.Task}</div>
-          <div class="row-meta">
-            <div class="row-meta-tags">${tagHTML(task)}${stepProgressTag(task)}</div>
-            <div class="row-meta-right">${impPipsHTML(task.ID, task.Importance)}${typeIconHTML(task)}</div>
-          </div>
+          <table class="row-meta"><tr>
+            <td class="row-meta-tags">${tagHTML(task)}${stepProgressTag(task)}</td>
+            <td class="row-meta-right">${impPipsHTML(task.ID, task.Importance)}${typeIconHTML(task)}</td>
+          </tr></table>
         </div>
         <div class="row-actions">
           ${hasSteps ? `<div class="chip-arrow${isOpen?' open':''}" style="font-size:12px;color:var(--muted);cursor:pointer;transition:transform 0.25s;" id="row-arrow-${task.ID}">▸</div>` : ''}
@@ -927,7 +927,13 @@ function toggleFilter(filterType, value, el) {
 
 // ---- ADD MODAL ----
 function openAddModal() { document.getElementById('addModalOverlay').classList.add('open'); }
-function closeAddModal() { document.getElementById('addModalOverlay').classList.remove('open'); resetAddForm(); }
+function closeAddModal() {
+  document.getElementById('addModalOverlay').classList.remove('open');
+  const btn = document.querySelector('#addModalOverlay .btn-primary');
+  btn.disabled = false;
+  btn.textContent = 'Add Task';
+  resetAddForm();
+}
 function closeAddModalIfBg(e) { if (e.target===document.getElementById('addModalOverlay')) closeAddModal(); }
 
 function selectOpt(field, value, el) {
@@ -972,6 +978,9 @@ function resetAddForm() {
 async function submitTask() {
   const name = document.getElementById('newName').value.trim();
   if (!name) { alert('Please enter a task name.'); return; }
+  const btn = document.querySelector('#addModalOverlay .btn-primary');
+  btn.disabled = true;
+  btn.textContent = 'Saving...';
   const steps = getNewSteps();
   const task = {
     name, time: newTask.time||'Open ended', type: newTask.type||'Physical',
@@ -982,7 +991,11 @@ async function submitTask() {
     await fetch(SCRIPT_URL, { redirect:'follow', method:'POST', body: JSON.stringify({action:'addTask', task}) });
     closeAddModal();
     await syncFromSheet();
-  } catch(e) { alert('Could not save task.'); }
+  } catch(e) {
+    alert('Could not save task.');
+    btn.disabled = false;
+    btn.textContent = 'Add Task';
+  }
 }
 
 // ---- EDIT PANEL ----
