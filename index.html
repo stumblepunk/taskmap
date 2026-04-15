@@ -131,6 +131,8 @@
   .chip-main { flex: 1; min-width: 0; }
   .chip-name { font-size: 11px; font-weight: 600; line-height: 1.3; margin-bottom: 4px; }
   .chip-meta { display: flex; flex-wrap: wrap; gap: 3px; align-items: center; }
+  .chip-meta .imp-bar { margin-left: auto; flex-shrink: 0; }
+  .row-meta .imp-bar { margin-left: auto; flex-shrink: 0; }
 
   .chip-actions { display: flex; gap: 4px; flex-shrink: 0; margin-top: 1px; }
   .chip-arrow { font-size: 11px; color: var(--muted); transition: transform 0.25s; cursor: pointer; padding: 1px; }
@@ -614,7 +616,7 @@ function quadrant(task) {
 
 function impPipsHTML(taskId, imp) {
   imp = parseInt(imp);
-  let html = `<div class="imp-bar" onclick="openImpPopover(event,${taskId})" title="Tap to change">`;
+  let html = `<div style="display:flex;align-items:center;gap:3px;margin-left:auto;flex-shrink:0;"><div class="imp-bar" onclick="openImpPopover(event,${taskId})" title="Tap to change" style="margin-left:0;">`;
   for (let i = 1; i <= 5; i++) {
     const col = i <= imp ? impColors[imp] : 'var(--border)';
     html += `<div class="imp-pip" style="background:${col}"></div>`;
@@ -632,7 +634,7 @@ function tagHTML(task) {
 
 function typeIconHTML(task) {
   const icon = task.Type === 'Physical' ? '🔧' : '🖥️';
-  return `<span style="font-size:12px; margin-left:4px; flex-shrink:0;" title="${task.Type}">${icon}</span>`;
+  return `<span style="font-size:12px;flex-shrink:0;" title="${task.Type}">${icon}</span></div>`;
 }
 
 function stepProgressTag(task) {
