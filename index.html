@@ -624,12 +624,15 @@ function impPipsHTML(taskId, imp) {
 
 function tagHTML(task) {
   const cc = catColors[task.Category] || 'var(--muted)';
-  const icon = task.Type === 'Physical' ? '🔧' : '🖥️';
   return `
     <span class="tag" style="background:${cc}22;color:${cc};border:1px solid ${cc}44">${task.Category}</span>
     <span class="tag" style="background:var(--surface2);color:var(--muted);border:1px solid var(--border)">${task.Time}</span>
-    <span style="font-size:11px; margin-left:2px;" title="${task.Type}">${icon}</span>
   `;
+}
+
+function typeIconHTML(task) {
+  const icon = task.Type === 'Physical' ? '🔧' : '🖥️';
+  return `<span style="font-size:12px; margin-left:4px; flex-shrink:0;" title="${task.Type}">${icon}</span>`;
 }
 
 function stepProgressTag(task) {
@@ -669,7 +672,7 @@ function render() {
       <div class="chip-header">
         <div class="chip-main">
           <div class="chip-name">${task.Task}</div>
-          <div class="chip-meta">${tagHTML(task)}${stepProgressTag(task)}${impPipsHTML(task.ID, task.Importance)}</div>
+          <div class="chip-meta">${tagHTML(task)}${stepProgressTag(task)}${impPipsHTML(task.ID, task.Importance)}${typeIconHTML(task)}</div>
         </div>
         <div class="chip-actions">
           ${hasSteps ? `<div class="chip-arrow${isOpen?' open':''}" id="arrow-${task.ID}">▸</div>` : ''}
@@ -747,7 +750,7 @@ function render() {
         <div class="row-check">${task.Done?'✓':''}</div>
         <div class="row-body">
           <div class="row-name${task.Done?' done-text':''}">${task.Task}</div>
-          <div class="row-meta">${tagHTML(task)}${stepProgressTag(task)}${impPipsHTML(task.ID, task.Importance)}</div>
+          <div class="row-meta">${tagHTML(task)}${stepProgressTag(task)}${impPipsHTML(task.ID, task.Importance)}${typeIconHTML(task)}</div>
         </div>
         <div class="row-actions">
           ${hasSteps ? `<div class="chip-arrow${isOpen?' open':''}" style="font-size:12px;color:var(--muted);cursor:pointer;transition:transform 0.25s;" id="row-arrow-${task.ID}">▸</div>` : ''}
