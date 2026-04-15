@@ -3,6 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#000000">
+<link rel="manifest" href="manifest.json">
 <title>Task Map</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700&family=Inconsolata:wght@400;500&display=swap');
@@ -10,7 +12,7 @@
   :root {
     --bg: #000000;
     --surface: #0d0d0d;
-    --surface2: #1a1a1a;
+    --surface2: #303030;
     --border: #222222;
     --accent: #d0d0d0;
     --text: #f0f0f0;
@@ -133,9 +135,9 @@
   .chip-actions { display: flex; gap: 4px; flex-shrink: 0; margin-top: 1px; }
   .chip-arrow { font-size: 11px; color: var(--muted); transition: transform 0.25s; cursor: pointer; padding: 1px; }
   .chip-arrow.open { transform: rotate(90deg); }
-  .chip-edit { font-size: 12px; color: var(--muted); cursor: pointer; padding: 1px 2px; transition: color 0.15s; }
+  .chip-edit { font-size:14px; color: #888; cursor: pointer; padding: 1px 2px; transition: color 0.15s; }
   .chip-edit:hover { color: var(--accent); }
-  .chip-delete { font-size: 10px; color: var(--border); cursor: pointer; padding: 1px 2px; transition: color 0.15s; }
+  .chip-delete { font-size:14px; color: #888; cursor: pointer; padding: 1px 2px; transition: color 0.15s; }
   .chip-delete:hover { color: #c06060; }
 
   /* ACCORDION */
@@ -671,7 +673,7 @@ function render() {
         </div>
         <div class="chip-actions">
           ${hasSteps ? `<div class="chip-arrow${isOpen?' open':''}" id="arrow-${task.ID}">▸</div>` : ''}
-          <div class="chip-edit" title="Edit">✎</div>
+          <div class="chip-edit" title="Edit">⋯</div>
           <div class="chip-delete" title="Delete">✕</div>
         </div>
       </div>
@@ -749,7 +751,7 @@ function render() {
         </div>
         <div class="row-actions">
           ${hasSteps ? `<div class="chip-arrow${isOpen?' open':''}" style="font-size:12px;color:var(--muted);cursor:pointer;transition:transform 0.25s;" id="row-arrow-${task.ID}">▸</div>` : ''}
-          <div class="chip-edit" title="Edit">✎</div>
+          <div class="chip-edit" title="Edit">⋯</div>
           <div class="chip-delete" title="Delete">✕</div>
         </div>
       </div>
