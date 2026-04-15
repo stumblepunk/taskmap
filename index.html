@@ -130,9 +130,12 @@
 
   .chip-main { flex: 1; min-width: 0; }
   .chip-name { font-size: 11px; font-weight: 600; line-height: 1.3; margin-bottom: 4px; }
-  .chip-meta { display: flex; flex-wrap: wrap; gap: 3px; align-items: center; }
-  .chip-meta .imp-bar { margin-left: auto; flex-shrink: 0; }
-  .row-meta .imp-bar { margin-left: auto; flex-shrink: 0; }
+  .chip-meta { display: flex; flex-direction: column; gap: 5px; }
+  .chip-meta-tags { display: flex; flex-wrap: wrap; gap: 3px; align-items: center; }
+  .chip-meta-right { display: flex; align-items: center; justify-content: flex-end; gap: 4px; }
+  .row-meta { display: flex; flex-direction: column; gap: 5px; }
+  .row-meta-tags { display: flex; flex-wrap: wrap; gap: 3px; align-items: center; }
+  .row-meta-right { display: flex; align-items: center; justify-content: flex-end; gap: 4px; }
 
   .chip-actions { display: flex; gap: 4px; flex-shrink: 0; margin-top: 1px; }
   .chip-arrow { font-size: 11px; color: var(--muted); transition: transform 0.25s; cursor: pointer; padding: 1px; }
@@ -214,7 +217,7 @@
   .row-body { flex: 1; min-width: 0; }
   .row-name { font-size: 14px; font-weight: 600; margin-bottom: 5px; line-height: 1.25; }
   .row-name.done-text { text-decoration: line-through; color: var(--muted); }
-  .row-meta { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; }
+
   .row-actions { display: flex; gap: 5px; flex-shrink: 0; margin-top: 1px; }
 
   .row-steps { background: var(--bg); border-top: 1px solid var(--border); padding: 8px 13px; display: flex; flex-direction: column; gap: 5px; }
@@ -616,7 +619,7 @@ function quadrant(task) {
 
 function impPipsHTML(taskId, imp) {
   imp = parseInt(imp);
-  let html = `<div style="display:flex;align-items:center;gap:3px;margin-left:auto;flex-shrink:0;"><div class="imp-bar" onclick="openImpPopover(event,${taskId})" title="Tap to change" style="margin-left:0;">`;
+  let html = `<div class="imp-bar" onclick="openImpPopover(event,${taskId})" title="Tap to change">`;
   for (let i = 1; i <= 5; i++) {
     const col = i <= imp ? impColors[imp] : 'var(--border)';
     html += `<div class="imp-pip" style="background:${col}"></div>`;
@@ -634,7 +637,7 @@ function tagHTML(task) {
 
 function typeIconHTML(task) {
   const icon = task.Type === 'Physical' ? '🔧' : '🖥️';
-  return `<span style="font-size:12px;flex-shrink:0;" title="${task.Type}">${icon}</span></div>`;
+  return `<span style="font-size:12px;flex-shrink:0;" title="${task.Type}">${icon}</span>`;
 }
 
 function stepProgressTag(task) {
@@ -674,7 +677,10 @@ function render() {
       <div class="chip-header">
         <div class="chip-main">
           <div class="chip-name">${task.Task}</div>
-          <div class="chip-meta">${tagHTML(task)}${stepProgressTag(task)}${impPipsHTML(task.ID, task.Importance)}${typeIconHTML(task)}</div>
+          <div class="chip-meta">
+            <div class="chip-meta-tags">${tagHTML(task)}${stepProgressTag(task)}</div>
+            <div class="chip-meta-right">${impPipsHTML(task.ID, task.Importance)}${typeIconHTML(task)}</div>
+          </div>
         </div>
         <div class="chip-actions">
           ${hasSteps ? `<div class="chip-arrow${isOpen?' open':''}" id="arrow-${task.ID}">▸</div>` : ''}
@@ -752,7 +758,10 @@ function render() {
         <div class="row-check">${task.Done?'✓':''}</div>
         <div class="row-body">
           <div class="row-name${task.Done?' done-text':''}">${task.Task}</div>
-          <div class="row-meta">${tagHTML(task)}${stepProgressTag(task)}${impPipsHTML(task.ID, task.Importance)}${typeIconHTML(task)}</div>
+          <div class="row-meta">
+            <div class="row-meta-tags">${tagHTML(task)}${stepProgressTag(task)}</div>
+            <div class="row-meta-right">${impPipsHTML(task.ID, task.Importance)}${typeIconHTML(task)}</div>
+          </div>
         </div>
         <div class="row-actions">
           ${hasSteps ? `<div class="chip-arrow${isOpen?' open':''}" style="font-size:12px;color:var(--muted);cursor:pointer;transition:transform 0.25s;" id="row-arrow-${task.ID}">▸</div>` : ''}
